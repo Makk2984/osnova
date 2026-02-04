@@ -16,15 +16,11 @@ class ReviewController {
             return;
         }
         
-        // Start session if not already started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
         // Check if user is logged in
-        if (!isset($_SESSION['user_id'])) {
+        $user = auth();
+        if (!$user) {
             $_SESSION['error'] = 'Увійдіть, щоб залишити відгук';
-            header('Location: /osnova/login');
+            header('Location: ' . baseUrl('login'));
             exit;
         }
         
@@ -34,19 +30,19 @@ class ReviewController {
         // Validation
         if ($rating < 1 || $rating > 5) {
             $_SESSION['error'] = 'Оберіть оцінку від 1 до 5 зірок';
-            header('Location: /osnova/products/' . $productId);
+            header('Location: ' . baseUrl('products/' . $productId));
             exit;
         }
         
         if (empty($comment)) {
             $_SESSION['error'] = 'Коментар обов\'язковий';
-            header('Location: /osnova/products/' . $productId);
+            header('Location: ' . baseUrl('products/' . $productId));
             exit;
         }
         
         $data = [
             'product_id' => $productId,
-            'user_id' => $_SESSION['user_id'],
+            'user_id' => $user['id'],
             'rating' => $rating,
             'comment' => $comment,
             'is_approved' => 0 // Reviews need approval
@@ -58,7 +54,7 @@ class ReviewController {
             $_SESSION['error'] = 'Помилка при збереженні відгуку';
         }
         
-        header('Location: /osnova/products/' . $productId);
+        header('Location: ' . baseUrl('products/' . $productId));
         exit;
     }
 }

@@ -12,7 +12,6 @@ class CheckoutController {
     private $productModel;
     
     public function __construct() {
-        // ... (конструктор залишається незмінним) ...
         $this->cartModel = new Cart();
         $this->orderModel = new Order();
         $this->productModel = new Product();
@@ -24,7 +23,21 @@ class CheckoutController {
         }
     }
     
-    // ... (index method) ...
+    public function index() {
+        $user = auth();
+        $userId = $user['id'];
+        
+        $cartItems = $this->cartModel->getItems($userId);
+        $cartTotal = $this->cartModel->getCartTotal($userId);
+        
+        if (empty($cartItems)) {
+            $_SESSION['error'] = 'Кошик порожній';
+            header('Location: ' . baseUrl('cart'));
+            exit;
+        }
+        
+        include __DIR__ . '/../../views/checkout/index.php';
+    }
     
     public function process() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -100,7 +113,8 @@ class CheckoutController {
             $this->orderModel->commit();
             
             $_SESSION['success'] = 'Замовлення успішно оформлено!';
-            header('Location: ' . baseUrl("orders/{$orderId}"));
+            $_SESSION['order_number'] = $orderNumber;
+            header('Location: ' . baseUrl('checkout/success'));
             exit;
             
         // РЯДОК 131 (виправлено завдяки use \Exception;)
@@ -113,5 +127,18 @@ class CheckoutController {
             header('Location: ' . baseUrl('checkout'));
             exit;
         }
+    }
+public function success() {
+        $orderNumber = $_SESSION['order_number'] ?? null;
+        
+        if (!$orderNumber) {
+            header('Location: ' . baseUrl(''));
+            exit;
+        }
+        
+        // Clear the order number from session after displaying
+        unset($_SESSION['order_number']);
+        
+        include __DIR__ . '/../../views/checkout/success.php';
     }
 }

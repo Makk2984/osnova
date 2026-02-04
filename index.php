@@ -61,6 +61,7 @@ $router->addRoute('GET', '/cart/data', 'CartController@getCartData');
 // Checkout routes
 $router->addRoute('GET', '/checkout', 'CheckoutController@index');
 $router->addRoute('POST', '/checkout', 'CheckoutController@process');
+$router->addRoute('GET', '/checkout/success', 'CheckoutController@success');
 
 // Order routes
 $router->addRoute('GET', '/orders/{id}', 'OrderController@show');
