@@ -98,6 +98,13 @@ class Order {
         )['total'] ?? 0;
     }
 
+    public function countByUserId($userId): int {
+        return $this->db->fetch(
+            "SELECT COUNT(*) as total FROM orders WHERE user_id = :user_id",
+            ['user_id' => $userId]
+        )['total'] ?? 0;
+    }
+
     public function countByStatus(string $status): int {
         return $this->db->fetch(
             "SELECT COUNT(*) as total FROM orders WHERE status = :status",
