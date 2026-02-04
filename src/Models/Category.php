@@ -10,6 +10,11 @@ class Category {
         $this->db = Database::getInstance();
     }
     
+    public function getAll() {
+        $sql = "SELECT * FROM categories ORDER BY name";
+        return $this->db->fetchAll($sql);
+    }
+    
     public function getActive() {
         $sql = "SELECT * FROM categories WHERE is_active = 1 ORDER BY name";
         return $this->db->query($sql)->fetchAll();
