@@ -121,6 +121,12 @@ class AuthController {
             'role' => 'customer'
         ]);
         
+        if (!$userId) {
+            $_SESSION['error'] = 'Помилка реєстрації';
+            redirect(baseUrl('/register'));
+            return;
+        }
+        
         $user = $this->userModel->findById($userId);
         unset($user['password']);
         $_SESSION['user'] = $user;
@@ -171,6 +177,12 @@ class AuthController {
             'description' => $description,
             'seller_status' => 'pending'
         ]);
+        
+        if (!$userId) {
+            $_SESSION['error'] = 'Помилка реєстрації';
+            redirect(baseUrl('/register/seller'));
+            return;
+        }
         
         $_SESSION['success'] = 'Заявка на реєстрацію продавця відправлена! Очікуйте підтвердження від адміністрації.';
         redirect(baseUrl('/register/seller?success=1'));

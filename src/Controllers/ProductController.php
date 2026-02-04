@@ -63,7 +63,7 @@ class ProductController {
             ];
             
             if ($this->productModel->create($data)) {
-                header('Location: /products?success=created');
+                header('Location: ' . baseUrl('products?success=created'));
                 exit;
             } else {
                 $error = 'Failed to create product';
@@ -97,7 +97,7 @@ class ProductController {
             ];
             
             if ($this->productModel->update($id, $data)) {
-                header('Location: /products?success=updated');
+                header('Location: ' . baseUrl('products?success=updated'));
                 exit;
             } else {
                 $error = 'Failed to update product';
@@ -111,9 +111,9 @@ class ProductController {
     public function delete($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($this->productModel->delete($id)) {
-                header('Location: /products?success=deleted');
+                header('Location: ' . baseUrl('products?success=deleted'));
             } else {
-                header('Location: /products?error=delete_failed');
+                header('Location: ' . baseUrl('products?error=delete_failed'));
             }
             exit;
         }

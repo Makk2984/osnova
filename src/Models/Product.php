@@ -189,9 +189,9 @@ class Product {
         return $this->db->update('products', ['is_active' => 0], 'id = :id', ['id' => $id]);
     }
     
-    public function updateStock($id, $quantity) {
-        $sql = "UPDATE products SET stock_quantity = stock_quantity - :quantity WHERE id = :id";
-        return $this->db->query($sql, ['id' => $id, 'quantity' => $quantity]);
+    public function updateStock($id, $newQuantity) {
+        $sql = "UPDATE products SET stock_quantity = :quantity WHERE id = :id";
+        return $this->db->execute($sql, ['id' => $id, 'quantity' => $newQuantity]);
     }
     
     public function getImages($productId) {
