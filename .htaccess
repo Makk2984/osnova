@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+    # Enable rewrite engine
+    RewriteEngine On
+    
+    # Set the base directory for rewrites
+    RewriteBase /osnova/
+    
+    # Remove trailing slash (optional)
+    # RewriteCond %{REQUEST_FILENAME} !-d
+    # RewriteRule ^(.*)/$ $1 [L,R=301]
+    
+    # Rewrite all requests that are not for existing files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Rewrite everything else to index.php
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Handle PHP errors
+php_flag display_errors on
+php_flag log_errors on

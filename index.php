@@ -94,24 +94,42 @@ $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 // Remove base path from request URI
-if (strpos($requestUri, $basePath) === 0) {
-    $requestUri = substr($requestUri, strlen($basePath));
+if (!empty($basePath)) {
+    if (strpos($requestUri, $basePath) === 0) {
+        $requestUri = substr($requestUri, strlen($basePath));
+    }
 }
 
 // Ensure we have at least a forward slash
-if (empty($requestUri) || $requestUri === '') {
+if (empty($requestUri)) {
     $requestUri = '/';
 }
 
 // Debug logging
-error_log("Request: {$requestMethod} {$requestUri}");
+error_log("===== REQUEST START =====");
+error_log("Full URI: {$_SERVER['REQUEST_URI']}");
+error_log("Base Path: {$basePath}");
+error_log("Normalized URI: {$requestUri}");
+error_log("Method: {$requestMethod}");
 
 try {
     $router->dispatch($requestMethod, $requestUri);
+    error_log("===== REQUEST SUCCESS =====");
 } catch (Exception $e) {
-    error_log("Router error: " . $e->getMessage());
-    http_response_code(404);
-    $title = 'Page Not Found';
-    $message = 'The requested page could not be found.';
-    include __DIR__ . '/views/errors/404.php';
+    error_log("Router Exception: " . $e->getMessage());
+    error_log("===== REQUEST FAILED =====");
+    
+    // Check if it's a 404 (route not found) or other error
+    if (strpos($e->getMessage(), 'Route not found') !== false ||
+        strpos($e->getMessage(), 'not found') !== false) {
+        http_response_code(404);
+        $title = 'Page Not Found';
+        $message = 'The requested page could not be found. Route: ' . htmlspecialchars($requestUri);
+        include __DIR__ . '/views/errors/404.php';
+    } else {
+        http_response_code(500);
+        $title = 'Server Error';
+        $message = 'An error occurred: ' . htmlspecialchars($e->getMessage());
+        include __DIR__ . '/views/errors/500.php';
+    }
 }
